@@ -1,6 +1,7 @@
 package com.secureauth.authserver.user.service;
 
 import com.secureauth.authserver.common.exception.BadRequestException;
+import com.secureauth.authserver.common.exception.UserNotFoundException;
 import com.secureauth.authserver.user.dto.UserDto;
 import com.secureauth.authserver.user.model.User;
 import com.secureauth.authserver.user.repository.UserRepository;
@@ -47,5 +48,12 @@ public class UserService {
 
         User savedUser = userRepository.save(user);
         return UserDto.fromEntity(savedUser);
+    }
+
+    public UserDto getUserByEmail(String email){
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found with this email id."));
+
+        return UserDto.fromEntity(user);
     }
 }
