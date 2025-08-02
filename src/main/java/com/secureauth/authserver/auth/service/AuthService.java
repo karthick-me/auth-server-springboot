@@ -17,11 +17,15 @@ import org.springframework.stereotype.Service;
 public class AuthService {
 
     private final UserService userService;
-    private AuthenticationManager authenticationManager;
+    private final JwtService tokenService;
+
+    private final AuthenticationManager authenticationManager;
 
     public AuthService(UserService userService,
+                       JwtService tokenService,
                        AuthenticationManager authenticationManager){
         this.userService = userService;
+        this.tokenService = tokenService;
         this.authenticationManager = authenticationManager;
     }
 
@@ -36,7 +40,7 @@ public class AuthService {
         return userService.registerUser(user);
     }
 
-    public UserDto login(LoginRequest loginRequest) {
+    public String login(LoginRequest loginRequest) {
 
         if (loginRequest.getEmail() == null || loginRequest.getPassword() == null) {
             throw new BadCredentialsException("Email and password must not be null");
@@ -53,6 +57,8 @@ public class AuthService {
                 new UsernamePasswordAuthenticationToken(email, password)
         );
 
-        return userService.getUserByEmail(email);
+        userService.getUserByEmail(email);
+
+        return tokenService.generateToken(email);
     }
 }

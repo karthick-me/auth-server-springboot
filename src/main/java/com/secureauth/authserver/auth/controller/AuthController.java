@@ -48,11 +48,11 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<ApiSuccessResponse> login(@RequestBody LoginRequest loginRequest){
 
-        UserDto loggedInUser = authService.login(loginRequest);
+        String token = authService.login(loginRequest);
 
         ApiSuccessResponse apiSuccessResponse = new ApiSuccessResponse(
                 "User logged in successfully",
-                loggedInUser, HttpStatus.OK.value());
+                token, HttpStatus.OK.value());
 
         return new ResponseEntity<>(apiSuccessResponse, HttpStatus.OK);
     }
