@@ -6,6 +6,7 @@ import com.secureauth.authserver.common.response.ApiSuccessResponse;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +19,11 @@ public class AuthController {
     @Autowired
     public AuthController(AuthService authService){
         this.authService = authService;
+    }
+
+    @GetMapping("/greet")
+    public ResponseEntity<String> greet(){
+        return new ResponseEntity<>("Hello from server", HttpStatus.ACCEPTED);
     }
 
     @PostMapping("/signup")
