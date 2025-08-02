@@ -1,6 +1,7 @@
 package com.secureauth.authserver.auth.service;
 
 import com.secureauth.authserver.auth.dto.SignupRequest;
+import com.secureauth.authserver.user.dto.UserDto;
 import com.secureauth.authserver.user.model.User;
 import com.secureauth.authserver.user.service.UserService;
 
@@ -16,7 +17,7 @@ public class AuthService {
         this.userService = userService;
     }
 
-    public void signup(SignupRequest signupRequest) throws BadRequestException {
+    public UserDto signup(SignupRequest signupRequest) throws BadRequestException {
 
         User user = new User();
 
@@ -24,6 +25,6 @@ public class AuthService {
         user.setPassword(signupRequest.getPassword());
         user.setUsername(signupRequest.getUsername());
 
-        userService.registerUser(user);
+        return userService.registerUser(user);
     }
 }
