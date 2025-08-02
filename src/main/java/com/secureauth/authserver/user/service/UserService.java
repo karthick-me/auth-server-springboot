@@ -1,6 +1,7 @@
 package com.secureauth.authserver.user.service;
 
 import com.secureauth.authserver.common.exception.BadRequestException;
+import com.secureauth.authserver.user.dto.UserDto;
 import com.secureauth.authserver.user.model.User;
 import com.secureauth.authserver.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,7 @@ public class UserService {
     public UserService(UserRepository userRepository){
         this.userRepository = userRepository;
     }
-    public User registerUser(User user) throws BadRequestException {
+    public UserDto registerUser(User user) throws BadRequestException {
         if(user.getEmail() == null
                 || user.getPassword() == null
                 || user.getUsername() == null){
@@ -35,6 +36,8 @@ public class UserService {
         user.setEmail(email);
         user.setUsername(username);
         user.setPassword(password);
-        return userRepository.save(user);
+
+        User savedUser = userRepository.save(user);
+        return UserDto.fromEntity(savedUser);
     }
 }
