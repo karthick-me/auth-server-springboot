@@ -9,6 +9,17 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<ApiErrorResponse> handleBadRequestException(BadRequestException exception){
+        String message = exception.getMessage();
+        ApiErrorResponse response = new ApiErrorResponse(
+                message,
+                HttpStatus.BAD_REQUEST,
+                "BAD_REQUEST"
+        );
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiErrorResponse> handleGenericException(Exception exception){
         ApiErrorResponse response = new ApiErrorResponse(

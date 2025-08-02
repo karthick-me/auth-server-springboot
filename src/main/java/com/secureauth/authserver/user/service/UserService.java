@@ -4,6 +4,7 @@ import com.secureauth.authserver.common.exception.BadRequestException;
 import com.secureauth.authserver.user.dto.UserDto;
 import com.secureauth.authserver.user.model.User;
 import com.secureauth.authserver.user.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
@@ -12,9 +13,11 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    @Autowired
     public UserService(UserRepository userRepository){
         this.userRepository = userRepository;
     }
+
     public UserDto registerUser(User user) throws BadRequestException {
         if(user.getEmail() == null
                 || user.getPassword() == null
