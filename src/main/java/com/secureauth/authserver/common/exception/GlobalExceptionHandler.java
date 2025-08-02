@@ -14,7 +14,7 @@ public class GlobalExceptionHandler {
         String message = exception.getMessage();
         ApiErrorResponse response = new ApiErrorResponse(
                 message,
-                HttpStatus.BAD_REQUEST,
+                HttpStatus.BAD_REQUEST.value(),
                 "BAD_REQUEST"
         );
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
@@ -24,7 +24,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiErrorResponse> handleGenericException(Exception exception){
         ApiErrorResponse response = new ApiErrorResponse(
                 "Something went wrong",
-                HttpStatus.INTERNAL_SERVER_ERROR,
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 "INTERNAL_SERVER_ERROR"
         );
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);

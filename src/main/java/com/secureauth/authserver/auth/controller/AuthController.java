@@ -25,7 +25,7 @@ public class AuthController {
         authService.signup(signupRequest);
         ApiSuccessResponse apiResponse = new ApiSuccessResponse(
                 "User created successfully",
-                signupRequest, HttpStatus.CREATED);
+                signupRequest, HttpStatus.CREATED.value());
         return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
     }
 }
