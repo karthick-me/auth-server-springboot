@@ -4,6 +4,7 @@ import com.secureauth.authserver.auth.dto.SignupRequest;
 import com.secureauth.authserver.user.model.User;
 import com.secureauth.authserver.user.service.UserService;
 
+import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,11 +16,14 @@ public class AuthService {
         this.userService = userService;
     }
 
-    public void signup(SignupRequest signupRequest) {
+    public void signup(SignupRequest signupRequest) throws BadRequestException {
+
         User user = new User();
+
         user.setEmail(signupRequest.getEmail());
         user.setPassword(signupRequest.getPassword());
         user.setUsername(signupRequest.getUsername());
-        userService.registerUser();
+
+        userService.registerUser(user);
     }
 }
