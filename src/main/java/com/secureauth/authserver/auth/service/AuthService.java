@@ -10,7 +10,10 @@ import com.secureauth.authserver.user.service.UserService;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
@@ -25,14 +28,18 @@ public class AuthService {
     private final UserService userService;
     private final JwtService jwtService;
 
+    private AuthenticationManager authenticationManager;
+
     private final UserDetailsService userDetailsService;
 
     public AuthService(UserService userService,
                        JwtService jwtService,
-                       UserDetailsService userDetailsService){
+                       UserDetailsService userDetailsService,
+                       AuthenticationManager authenticationManager){
         this.userService = userService;
         this.jwtService = jwtService;
         this.userDetailsService = userDetailsService;
+        this.authenticationManager = authenticationManager;
     }
 
     public UserDto signup(SignupRequest signupRequest){
@@ -60,6 +67,10 @@ public class AuthService {
         }
 
         Token token = jwtService.generateToken(email);
+
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(email, password)
+        );
 
         userService.setRefreshTokenDetails(email, token.getRefreshToken());
 

@@ -9,7 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
+import java.util.Base64;
 
 
 @Service
@@ -42,6 +46,11 @@ public class UserService {
         }
 
         String password = user.getPassword().trim();
+        byte[] passwordBytes = password.getBytes(StandardCharsets.UTF_8);
+        if (passwordBytes.length > 72) {
+            throw new BadRequestException("Password must not exceed 72 bytes.");
+        }
+
         String encryptedPassword = bCryptPasswordEncoder.encode(password);
 
         user.setEmail(email);
@@ -55,18 +64,33 @@ public class UserService {
     public void setRefreshTokenDetails(String email,
                                        String refreshToken){
         User user = getUserByEmail(email);
-        user.setRefreshToken(refreshToken);
+        String encryptedRefreshToken = hashRefreshToken(refreshToken);
+        user.setRefreshToken(encryptedRefreshToken);
         userRepository.save(user);
     }
 
-    public boolean isRefreshTokenValid(String jwtToken, String email) {
+    public boolean isRefreshTokenValid(String refreshToken, String email) {
         User user = getUserByEmail(email);
-        return  jwtToken.equals(user.getRefreshToken());
+        String hashed = hashRefreshToken(refreshToken);
+        return  MessageDigest.isEqual(
+                hashed.getBytes(StandardCharsets.UTF_8),
+                user.getRefreshToken().getBytes(StandardCharsets.UTF_8)
+        );
     }
 
     private User getUserByEmail(String email){
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User not found with this email id."));
+    }
+
+    public String hashRefreshToken(String token) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hashBytes = digest.digest(token.getBytes(StandardCharsets.UTF_8));
+            return Base64.getEncoder().encodeToString(hashBytes);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Error hashing refresh token", e);
+        }
     }
 
 }
