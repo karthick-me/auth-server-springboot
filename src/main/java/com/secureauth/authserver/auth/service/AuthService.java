@@ -2,6 +2,7 @@ package com.secureauth.authserver.auth.service;
 
 import com.secureauth.authserver.auth.dto.LoginRequest;
 import com.secureauth.authserver.auth.dto.SignupRequest;
+import com.secureauth.authserver.auth.dto.TokenResponse;
 import com.secureauth.authserver.user.dto.UserDto;
 import com.secureauth.authserver.user.model.User;
 import com.secureauth.authserver.user.service.UserService;
@@ -17,15 +18,15 @@ import org.springframework.stereotype.Service;
 public class AuthService {
 
     private final UserService userService;
-    private final JwtService tokenService;
+    private final JwtService jwtService;
 
     private final AuthenticationManager authenticationManager;
 
     public AuthService(UserService userService,
-                       JwtService tokenService,
+                       JwtService jwtService,
                        AuthenticationManager authenticationManager){
         this.userService = userService;
-        this.tokenService = tokenService;
+        this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
     }
 
@@ -40,7 +41,7 @@ public class AuthService {
         return userService.registerUser(user);
     }
 
-    public String login(LoginRequest loginRequest) {
+    public TokenResponse login(LoginRequest loginRequest) {
 
         if (loginRequest.getEmail() == null || loginRequest.getPassword() == null) {
             throw new BadCredentialsException("Email and password must not be null");
@@ -59,6 +60,6 @@ public class AuthService {
 
         userService.getUserByEmail(email);
 
-        return tokenService.generateToken(email);
+        return jwtService.generateToken(email);
     }
 }

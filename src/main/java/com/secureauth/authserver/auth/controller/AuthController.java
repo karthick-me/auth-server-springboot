@@ -2,6 +2,7 @@ package com.secureauth.authserver.auth.controller;
 
 import com.secureauth.authserver.auth.dto.LoginRequest;
 import com.secureauth.authserver.auth.dto.SignupRequest;
+import com.secureauth.authserver.auth.dto.TokenResponse;
 import com.secureauth.authserver.auth.service.AuthService;
 import com.secureauth.authserver.common.response.ApiSuccessResponse;
 import com.secureauth.authserver.user.dto.UserDto;
@@ -48,7 +49,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<ApiSuccessResponse> login(@RequestBody LoginRequest loginRequest){
 
-        String token = authService.login(loginRequest);
+        TokenResponse token = authService.login(loginRequest);
 
         ApiSuccessResponse apiSuccessResponse = new ApiSuccessResponse(
                 "User logged in successfully",
