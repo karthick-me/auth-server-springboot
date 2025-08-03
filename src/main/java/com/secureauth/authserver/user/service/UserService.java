@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 
 @Service
 public class UserService {
@@ -50,10 +52,21 @@ public class UserService {
         return UserDto.fromEntity(savedUser);
     }
 
-    public UserDto getUserByEmail(String email){
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("User not found with this email id."));
-
-        return UserDto.fromEntity(user);
+    public void setRefreshTokenDetails(String email,
+                                       String refreshToken){
+        User user = getUserByEmail(email);
+        user.setRefreshToken(refreshToken);
+        userRepository.save(user);
     }
+
+    public boolean isRefreshTokenValid(String jwtToken, String email) {
+        User user = getUserByEmail(email);
+        return  jwtToken.equals(user.getRefreshToken());
+    }
+
+    private User getUserByEmail(String email){
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found with this email id."));
+    }
+
 }

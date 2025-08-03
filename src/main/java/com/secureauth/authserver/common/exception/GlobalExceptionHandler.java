@@ -1,7 +1,6 @@
 package com.secureauth.authserver.common.exception;
 
 import com.secureauth.authserver.common.response.ApiErrorResponse;
-import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -9,6 +8,18 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<ApiErrorResponse> handleInvalidTokenException(InvalidTokenException exception){
+        String message = exception.getMessage();
+        ApiErrorResponse response = new ApiErrorResponse(
+                message,
+                HttpStatus.UNAUTHORIZED.value(),
+                "UNAUTHORIZED"
+        );
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+    }
 
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<ApiErrorResponse> handleBadRequestException(BadRequestException exception){
