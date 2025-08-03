@@ -3,6 +3,7 @@ package com.secureauth.authserver.auth.controller;
 import com.secureauth.authserver.auth.dto.LoginRequest;
 import com.secureauth.authserver.auth.dto.SignupRequest;
 import com.secureauth.authserver.auth.dto.Token;
+import com.secureauth.authserver.auth.dto.VerifyUserRequest;
 import com.secureauth.authserver.auth.service.AuthService;
 import com.secureauth.authserver.common.response.ApiSuccessResponse;
 import com.secureauth.authserver.user.dto.UserDto;
@@ -13,6 +14,7 @@ import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -69,6 +71,29 @@ public class AuthController {
 
         ApiSuccessResponse apiSuccessResponse = new ApiSuccessResponse(
                 "Token refreshed successfully", HttpStatus.OK.value());
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(apiSuccessResponse);
+    }
+
+    @PostMapping("/verify-email")
+    public ResponseEntity<ApiSuccessResponse> verifyEmail(
+            @RequestBody VerifyUserRequest verifyUserRequest){
+        authService.verifyUser(verifyUserRequest);
+        ApiSuccessResponse apiSuccessResponse = new ApiSuccessResponse(
+                "User verified successfully", HttpStatus.OK.value());
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(apiSuccessResponse);
+    }
+
+    @PostMapping("/resend-verification")
+    public ResponseEntity<ApiSuccessResponse> resentVerificationEmail(
+            @RequestBody VerifyUserRequest verifyUserRequest){
+        String email = verifyUserRequest.getEmail();
+        authService.resendVerificationCode(email);
+        ApiSuccessResponse apiSuccessResponse = new ApiSuccessResponse(
+                "verification code send successfully. check your inbox", HttpStatus.OK.value());
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(apiSuccessResponse);

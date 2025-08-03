@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.time.LocalDateTime;
 import java.util.Base64;
 
 
@@ -28,7 +27,7 @@ public class UserService {
         this.bCryptPasswordEncoder = new BCryptPasswordEncoder(12);
     }
 
-    public UserDto registerUser(User user) throws BadRequestException {
+    public User registerUser(User user) throws BadRequestException {
         if(user.getEmail() == null
                 || user.getPassword() == null
                 || user.getUsername() == null){
@@ -57,8 +56,7 @@ public class UserService {
         user.setUsername(username);
         user.setPassword(encryptedPassword);
 
-        User savedUser = userRepository.save(user);
-        return UserDto.fromEntity(savedUser);
+        return userRepository.save(user);
     }
 
     public void setRefreshTokenDetails(String email,
@@ -78,12 +76,15 @@ public class UserService {
         );
     }
 
-    private User getUserByEmail(String email){
+    public User getUserByEmail(String email){
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User not found with this email id."));
     }
 
-    public String hashRefreshToken(String token) {
+    public User saveUser(User user){
+        return userRepository.save(user);
+    }
+    private String hashRefreshToken(String token) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hashBytes = digest.digest(token.getBytes(StandardCharsets.UTF_8));

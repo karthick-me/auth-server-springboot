@@ -41,7 +41,9 @@ public class SecurityConfig {
                                 .requestMatchers(
                                         "/api/auth/signup",
                                         "/api/auth/login",
-                                        "/api/auth/token/refresh" ).permitAll()
+                                        "/api/auth/token/refresh",
+                                        "/api/auth/verify-email",
+                                        "api/auth/resend-verification").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults())

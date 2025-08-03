@@ -28,6 +28,8 @@ public class User {
 
     private String refreshToken;
 
+    private boolean enabled;
+
     @Column(name = "created_at", updatable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime createdAt;
