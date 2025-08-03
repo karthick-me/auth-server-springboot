@@ -29,7 +29,12 @@ public class JwtService {
         String accessToken = jwtUtils.createToken(email, accessTokenExpiration);
         String refreshToken = jwtUtils.createToken(email, refreshTokenExpiration);
 
-        TokenResponse tokenResponse = new TokenResponse(accessToken, refreshToken);
+        TokenResponse tokenResponse = new TokenResponse(
+                accessToken,
+                refreshToken,
+                accessTokenExpiration,
+                refreshTokenExpiration
+        );
 
         return tokenResponse;
     }

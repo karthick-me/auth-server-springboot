@@ -6,13 +6,13 @@ import com.secureauth.authserver.auth.dto.TokenResponse;
 import com.secureauth.authserver.auth.service.AuthService;
 import com.secureauth.authserver.common.response.ApiSuccessResponse;
 import com.secureauth.authserver.user.dto.UserDto;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -47,13 +47,32 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiSuccessResponse> login(@RequestBody LoginRequest loginRequest){
+    public ResponseEntity<ApiSuccessResponse> login(@RequestBody LoginRequest loginRequest,
+                                                    HttpServletResponse httpServletResponse){
 
-        TokenResponse token = authService.login(loginRequest);
+        TokenResponse tokenResponse = authService.login(loginRequest);
+
+        int accessTokenExpiry = (int) tokenResponse.getAccessTokenExpiration() / 1000;
+        int refreshTokenExpiry = (int) tokenResponse.getRefreshTokenExpiration() / 1000;
+
+
+        Cookie accessTokenCookie = new Cookie("accessToken", tokenResponse.getAccessToken());
+        accessTokenCookie.setHttpOnly(true);
+        accessTokenCookie.setMaxAge(accessTokenExpiry);
+        accessTokenCookie.setSecure(true);
+
+        Cookie refreshTokenCookie = new Cookie("refreshToken", tokenResponse.getRefreshToken());
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setSecure(true);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setMaxAge(refreshTokenExpiry);
+
+        httpServletResponse.addCookie(accessTokenCookie);
+        httpServletResponse.addCookie(refreshTokenCookie);
 
         ApiSuccessResponse apiSuccessResponse = new ApiSuccessResponse(
                 "User logged in successfully",
-                token, HttpStatus.OK.value());
+                null, HttpStatus.OK.value());
 
         return new ResponseEntity<>(apiSuccessResponse, HttpStatus.OK);
     }
