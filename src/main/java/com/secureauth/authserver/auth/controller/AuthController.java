@@ -20,13 +20,10 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
-    private final AuthenticationManager authenticationManager;
 
     @Autowired
-    public AuthController(AuthService authService,
-                          AuthenticationManager authenticationManager){
+    public AuthController(AuthService authService){
         this.authService = authService;
-        this.authenticationManager = authenticationManager;
     }
 
     @GetMapping("/greet")
@@ -71,8 +68,7 @@ public class AuthController {
         httpServletResponse.addCookie(refreshTokenCookie);
 
         ApiSuccessResponse apiSuccessResponse = new ApiSuccessResponse(
-                "User logged in successfully",
-                null, HttpStatus.OK.value());
+                "User logged in successfully", HttpStatus.OK.value());
 
         return new ResponseEntity<>(apiSuccessResponse, HttpStatus.OK);
     }

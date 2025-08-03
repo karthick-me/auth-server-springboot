@@ -8,8 +8,14 @@ import lombok.EqualsAndHashCode;
 public class ApiSuccessResponse extends ApiResponse{
     private Object data;
 
-    public ApiSuccessResponse(String message, Object data, int statusCode){
+    public ApiSuccessResponse(String message,
+                              Object data,
+                              int statusCode){
         super(true, message, statusCode);
         this.data = data;
+    }
+
+    public ApiSuccessResponse(String message, int statusCode){
+        super(true, message, statusCode);
     }
 }
